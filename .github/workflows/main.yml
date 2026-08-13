@@ -33,13 +33,12 @@ jobs:
 
       - name: Commit and Push Update
         run: |
-          # Stage the newly copied folder
           git add target/d1xks
           
-          # Check if there are actual changes before trying to commit
           if git diff --cached --quiet; then
             echo "No changes detected. The d1xks folder is already up to date."
           else
             git commit -m "Import d1xks target from EternityROM (Branch: fifteen)"
-            git push origin sixteen          
+            git pull --rebase origin sixteen
+            git push origin sixteen
           fi
