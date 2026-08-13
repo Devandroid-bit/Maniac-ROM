@@ -1,4 +1,4 @@
-name: Build ExtremeROM
+name: Build Star7ROM
 
 on:
   workflow_dispatch:
@@ -6,15 +6,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
-
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
-        target: [c2s]
+        target: [d2s]
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           submodules: 'recursive'
 
@@ -55,6 +56,18 @@ jobs:
           java-version: '21'
           cache: 'gradle'
 
+      - name: Fix script permissions
+        run: |
+          echo "Fixing permissions for all shell scripts..."
+          find . -type f -name "*.sh" -exec chmod +x {} \;
+          find ./scripts -type f -exec chmod +x {} \;
+          chmod +x ./scripts/make_rom.sh
+          chmod +x ./scripts/internal/build_flashable_zip.sh
+          echo "Verifying permissions:"
+          ls -la ./scripts/make_rom.sh
+          ls -la ./scripts/internal/build_flashable_zip.sh
+          echo "All script permissions fixed!"
+
       - name: Build dependencies
         run: |
           source ./buildenv.sh ${{ matrix.target }}
@@ -80,22 +93,93 @@ jobs:
           source ./buildenv.sh ${{ matrix.target }}
           ./scripts/extract_fw.sh --force --ignore-source
 
+      - name: Add swapspace
+        uses: thejerrybao/setup-swap-space@v1
+        with:
+          swap-space-path: /swapfile
+          swap-size-gb: 12
+          remove-existing-swap-files: true
+
       - name: Build ROM
         run: |
           source ./buildenv.sh ${{ matrix.target }}
           ./scripts/make_rom.sh --force
 
-      - name: Upload to GoFile
+      - name: Find ZIP file
+        id: find_zip
         run: |
           ZIP_FILE=$(find out -maxdepth 1 -type f -name "*.zip" | head -n 1)
+          if [ -z "$ZIP_FILE" ]; then
+            echo "Error: ZIP file not found"
+            exit 1
+          fi
+          ZIP_NAME=$(basename "$ZIP_FILE")
+          ZIP_SHA256=$(sha256sum "$ZIP_FILE" | cut -d' ' -f1)
+          echo "zip_path=$ZIP_FILE" >> $GITHUB_OUTPUT
+          echo "zip_name=$ZIP_NAME" >> $GITHUB_OUTPUT
+          echo "zip_sha256=$ZIP_SHA256" >> $GITHUB_OUTPUT
 
-          RESPONSE=$(curl -s -F "file=@$ZIP_FILE" -F "token=${{ secrets.GOFILE_TOKEN }}" -F "folderId=${{ secrets.GOFILE_FOLDER_ID }}" "https://upload-eu-par.gofile.io/uploadFile")
+      - name: Split ZIP into chunks (if >1.5GB)
+        id: split_zip
+        run: |
+          ZIP_PATH="${{ steps.find_zip.outputs.zip_path }}"
+          ZIP_SIZE=$(stat -c%s "$ZIP_PATH")
+          ZIP_DIR=$(dirname "$ZIP_PATH")
+          ZIP_NAME=$(basename "$ZIP_PATH")
+          
+          if [ $ZIP_SIZE -gt 1500000000 ]; then
+            echo "Splitting ZIP file into 1.5GB chunks..."
+            
+            ORIGINAL_DIR=$(pwd)
+            cd "$ZIP_DIR"
+            split -b 1500m "$ZIP_NAME" "$ZIP_NAME.part."
+            
+            echo "split_files<<EOF" >> $GITHUB_OUTPUT
+            for f in "${ZIP_NAME}.part."*; do
+              echo "$ORIGINAL_DIR/$ZIP_DIR/$f" >> $GITHUB_OUTPUT
+            done
+            echo "EOF" >> $GITHUB_OUTPUT
+            
+            FILE_LIST=$(ls "${ZIP_NAME}.part."* | tr '\n' ' ')
+            echo "file_list=$FILE_LIST" >> $GITHUB_OUTPUT
+            echo "is_split=true" >> $GITHUB_OUTPUT
+            
+            cd "$ORIGINAL_DIR"
+          else
+            echo "ZIP file is under 1.5GB, no splitting needed"
+            echo "split_files<<EOF" >> $GITHUB_OUTPUT
+            echo "$ZIP_PATH" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+            echo "is_split=false" >> $GITHUB_OUTPUT
+          fi
 
-          echo "Uploaded successfully! Download link:"
-          echo "$RESPONSE" | jq -r '.data.downloadPage'
-
-          echo "MD5:"
-          md5sum "$ZIP_FILE"
-
-          echo "SHA256:"
-          sha256sum "$ZIP_FILE"
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: v${{ github.run_number }}-${{ matrix.target }}
+          name: Star7ROM ${{ matrix.target }} • ${{ github.event.repository.updated_at }}
+          files: ${{ steps.split_zip.outputs.split_files }}
+          body: |
+            ✅ Built from workflow run [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            🎯 Target: ${{ matrix.target }}
+            ⚙️ Build environment: Ubuntu 24.04 + JDK 21 + CCache
+            🔐 Signed with platform keys
+            
+            ## File Info
+            ${{ steps.split_zip.outputs.is_split == 'true' && '📦 **Split ZIP parts**' || '📦 **Single ZIP file**' }}
+            ${{ steps.split_zip.outputs.is_split == 'true' && format('Parts: {0}', steps.split_zip.outputs.file_list) || format('File: {0}', steps.find_zip.outputs.zip_name) }}
+            
+            ## Checksums
+            - **SHA256**: `${{ steps.find_zip.outputs.zip_sha256 }}`
+            
+            ${{ steps.split_zip.outputs.is_split == 'true' && '## Merge Instructions' || '' }}
+            ${{ steps.split_zip.outputs.is_split == 'true' && format('```bash
+            # Merge all parts
+            cat {0}.part.* > {0}
+            
+            # Verify checksum
+            sha256sum {0}
+            ```', steps.find_zip.outputs.zip_name) || '' }}
+            
+            > ⚠️ This is a **pre-release** — verify checksum before flashing.
