@@ -4,6 +4,8 @@ on: workflow_dispatch
 jobs:
   import-folder:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout UN1CA Repository
         uses: actions/checkout@v4
