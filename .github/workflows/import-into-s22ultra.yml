@@ -43,10 +43,23 @@ jobs:
 
       - name: Commit and Push Update
         run: |
-          git add platform/exynos9825 target/d1xks prebuilts/a26xxx prebuilts/dm3qxxx prebuilts/p3sxxx
+          FOLDERS=(
+            "platform/exynos9825"
+            "target/d1xks"
+            "prebuilts/a26xxx"
+            "prebuilts/dm3qxxx"
+            "prebuilts/p3sxxx"
+          )
+          for f in "${FOLDERS[@]}"; do
+            if [ -e "$f" ]; then
+              git add "$f"
+            else
+              echo "Skipping add: $f does not exist"
+            fi
+          done
 
           if git diff --cached --quiet; then
-            echo "No changes detected. S22-Ultra is already up to date."
+            echo "No changes detected. s22-Ultra is already up to date."
           else
             git commit -m "Import platform/exynos9825, target/d1xks and prebuilts (a26xxx, dm3qxxx, p3sxxx) from sixteen"
             git pull --rebase origin s22-Ultra
