@@ -1,0 +1,55 @@
+name: Import mods into S22-Ultra
+on: workflow_dispatch
+
+jobs:
+  import-folders:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout S22-Ultra
+        uses: actions/checkout@v4
+        with:
+          ref: S22-Ultra
+          fetch-depth: 0
+
+      - name: Fetch sixteen branch
+        run: git fetch origin sixteen
+
+      - name: Copy folders from sixteen
+        run: |
+          FOLDERS=(
+            "platform/exynos9825"
+            "target/d1xks"
+            "prebuilts/a26xxx"
+            "prebuilts/dm3qxxx"
+            "prebuilts/p3sxxx"
+          )
+          for f in "${FOLDERS[@]}"; do
+            echo "== Importing $f =="
+            rm -rf "$f"
+            mkdir -p "$(dirname "$f")"
+            if git checkout origin/sixteen -- "$f"; then
+              echo "OK: $f imported"
+            else
+              echo "WARNING: $f not found in sixteen, skipping"
+            fi
+          done
+
+      - name: Configure Bot Identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and Push Update
+        run: |
+          git add platform/exynos9825 target/d1xks prebuilts/a26xxx prebuilts/dm3qxxx prebuilts/p3sxxx
+
+          if git diff --cached --quiet; then
+            echo "No changes detected. S22-Ultra is already up to date."
+          else
+            git commit -m "Import platform/exynos9825, target/d1xks and prebuilts (a26xxx, dm3qxxx, p3sxxx) from sixteen"
+            git pull --rebase origin S22-Ultra
+            git push origin S22-Ultra
+          fi
+          
