@@ -21,9 +21,9 @@ jobs:
           FOLDERS=(
             "platform/exynos9825"
             "target/d1xks"
-            "prebuilts/a26xxx"
-            "prebuilts/dm3qxxx"
-            "prebuilts/p3sxxx"
+            "prebuilts/samsung/a26xxx"
+            "prebuilts/samsung/dm3qxxx"
+            "prebuilts/samsung/p3sxxx"
           )
           for f in "${FOLDERS[@]}"; do
             echo "== Importing $f =="
