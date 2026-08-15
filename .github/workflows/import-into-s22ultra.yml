@@ -1,4 +1,4 @@
-name: Import mods into S22-Ultra
+name: Import mods into s22-Ultra
 on: workflow_dispatch
 
 jobs:
@@ -7,10 +7,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout S22-Ultra
+      - name: Checkout s22-Ultra
         uses: actions/checkout@v4
         with:
-          ref: S22-Ultra
+          ref: s22-Ultra
           fetch-depth: 0
 
       - name: Fetch sixteen branch
@@ -49,6 +49,6 @@ jobs:
             echo "No changes detected. S22-Ultra is already up to date."
           else
             git commit -m "Import platform/exynos9825, target/d1xks and prebuilts (a26xxx, dm3qxxx, p3sxxx) from sixteen"
-            git pull --rebase origin S22-Ultra
-            git push origin S22-Ultra
+            git pull --rebase origin s22-Ultra
+            git push origin s22-Ultra
           fi
