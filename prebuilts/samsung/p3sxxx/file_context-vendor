@@ -14,7 +14,6 @@
 /vendor/bin/hw/vendor\.samsung\.hardware\.vibrator-service u:object_r:hal_vibrator_default_exec:s0
 /vendor/bin/hw/wpa_supplicant u:object_r:hal_wifi_supplicant_default_exec:s0
 /vendor/bin/snap_utility_64 u:object_r:vendor_file:s0
-/vendor/build\.prop u:object_r:vendor_file:s0
 /vendor/etc u:object_r:vendor_configs_file:s0
 /vendor/etc/init u:object_r:vendor_configs_file:s0
 /vendor/etc/init/init\.vendor\.rilcommon\.rc u:object_r:vendor_configs_file:s0
