@@ -23,4 +23,4 @@ ROM_VERSION="${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
 # Append current commit hash to version name
 ROM_VERSION+="-$(git rev-parse --short HEAD)"
 
-ROM_CODENAME="Devandroid"
+ROM_CODENAME="Segfault"
