@@ -19,7 +19,7 @@ jobs:
       - name: Copy folders from sixteen
         run: |
           FOLDERS=(
-            "prebuilts/samsung/b0sxxx"
+            "target/d2s"
           )
           for f in "${FOLDERS[@]}"; do
             echo "== Importing $f =="
@@ -40,7 +40,7 @@ jobs:
       - name: Commit and Push Update
         run: |
           FOLDERS=(
-            "prebuilts/samsung/b0sxxx"
+            "target/d2s"
           )
           for f in "${FOLDERS[@]}"; do
             if [ -e "$f" ]; then
@@ -53,7 +53,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes detected. s22-Ultra is already up to date."
           else
-            git commit -m "Import prebuilts (b0sxxx) from sixteen"
+            git commit -m "Import target d2s from sixteen"
             git pull --rebase origin s22-Ultra
             git push origin s22-Ultra
           fi
