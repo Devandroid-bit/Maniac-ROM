@@ -13,7 +13,6 @@ vendor/bin/hw/vendor.samsung.hardware.uwb@1.0-service 0 2000 755 capabilities=0x
 vendor/bin/hw/vendor.samsung.hardware.vibrator-service 0 2000 755 capabilities=0x0
 vendor/bin/hw/wpa_supplicant 0 2000 755 capabilities=0x0
 vendor/bin/snap_utility_64 0 2000 755 capabilities=0x0
-vendor/build.prop 0 0 644 capabilities=0x0
 vendor/etc 0 2000 755 capabilities=0x0
 vendor/etc/init 0 2000 755 capabilities=0x0
 vendor/etc/init/init.vendor.rilcommon.rc 0 0 644 capabilities=0x0
