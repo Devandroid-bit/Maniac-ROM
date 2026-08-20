@@ -63,7 +63,6 @@ LOG "- Fixing JSQZ node permission"
 echo "/dev/jsqz                 0660   mediacodec     camera" >> $WORK_DIR/vendor/ueventd.rc
 
 LOG_STEP_IN "- Adding S21 (p3sxxx) Light HAL and some exynos9825 fixes"
-ADD_TO_WORK_DIR "p3sxxx" "vendor" "build.prop"
 ADD_TO_WORK_DIR "p3sxxx" "vendor" "bin/snap_utility_64"
 ADD_TO_WORK_DIR "p3sxxx" "vendor" "bin/hw/vendor.samsung.hardware.light-service"
 ADD_TO_WORK_DIR "p3sxxx" "vendor" "bin/hw/wpa_supplicant"
