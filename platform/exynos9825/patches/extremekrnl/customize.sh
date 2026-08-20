@@ -6,7 +6,7 @@ REPLACE_KERNEL_BINARIES()
     [ -d "$TMP_DIR" ] && rm -rf "$TMP_DIR"
     mkdir -p "$TMP_DIR"
     # This ensures it grabs the d1xks kernel from the initial release
-    ZIP_LINK="https://github.com/Devandroid-bit/exynos982x_kernel/releases/download/latest/ArtisanKRNL-v3.1.5-N10-${TARGET_CODENAME}.zip"
+    ZIP_LINK="https://github.com/Devandroid-bit/exynos982x_kernel/releases/download/latest/DevandroidKRNL-v3.1.5-N10-${TARGET_CODENAME}.zip"
 
     LOG "Downloading $(basename "$ZIP_LINK")"
     
