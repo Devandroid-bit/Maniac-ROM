@@ -80,3 +80,8 @@ ADD_TO_WORK_DIR "p3sxxx" "vendor" "lib64/libDualCamBokehCapture.camera.samsung.s
 ADD_TO_WORK_DIR "p3sxxx" "vendor" "lib64/liblivefocus_capture_engine.so"
 ADD_TO_WORK_DIR "p3sxxx" "vendor" "lib64/liblivefocus_preview_engine.so"
 LOG_STEP_OUT
+
+LOG_STEP_IN "- Removing broken SNAP service (SAIV model mismatch)"
+DELETE_FROM_WORK_DIR "vendor" "etc/init/vendor.samsung.hardware.snap-lazy.rc"
+DELETE_FROM_WORK_DIR "vendor" "bin/hw/vendor.samsung.hardware.snap-service"
+LOG_STEP_OUT
