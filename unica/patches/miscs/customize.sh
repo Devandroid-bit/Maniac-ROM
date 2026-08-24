@@ -5,7 +5,7 @@ REGION=$(echo -n "$TARGET_FIRMWARE" | cut -d "/" -f 2)
 ROM_STATUS=" OFFICIAL"
 $ROM_IS_OFFICIAL || ROM_STATUS=" OFFICIAL"
 VALUE="$(GET_PROP "$WORK_DIR/system/system/build.prop" "ro.build.display.id")"
-SET_PROP "system" "ro.build.display.id" "ManiacROM$ROM_STATUS $ROM_CODENAME $ROM_VERSION - $TARGET_CODENAME ($VALUE)"
+SET_PROP "system" "ro.build.display.id" "DevandroidROM$ROM_STATUS $ROM_CODENAME $ROM_VERSION - $TARGET_CODENAME ($VALUE)"
 
 SET_PROP "system" "ro.extremerom.official" "$ROM_IS_OFFICIAL"
 SET_PROP "system" "ro.extremerom.version" "$ROM_VERSION"
