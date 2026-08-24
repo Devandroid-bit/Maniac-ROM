@@ -26,7 +26,7 @@ TARGET_FINGERPRINT="${TARGET_FINGERPRINT//$(GET_PROP "$FW_DIR/$TARGET_FIRMWARE_P
 
 TMP_DIR="$OUT_DIR/zip"
 
-ROM_STATUS="UNOFFICIAL"
+ROM_STATUS="OFFICIAL"
 $ROM_IS_OFFICIAL && ROM_STATUS="OFFICIAL"
 
 ZIP_FILE_SUFFIX="-sign.zip"
@@ -613,7 +613,7 @@ PRINT_HEADER()
     echo    'ui_print("Proceeding...!");'
     echo    'ui_print(" ");'
     echo    'ui_print("****************************************************");'
-    echo    'ui_print("       M A N I A C ---- R O M     ONEUI 8.0         ");'
+    echo    'ui_print("       D E V A N D R O I D ---- R O M     ONEUI 8.0         ");'
     echo    'ui_print("****************************************************");'
 }
 # ]
