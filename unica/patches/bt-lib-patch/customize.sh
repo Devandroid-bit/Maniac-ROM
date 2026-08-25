@@ -1,3 +1,6 @@
+# Add pre-patched libbluetooth_jni.so from b0sxxx (VaultKeeper already disabled)
+ADD_TO_WORK_DIR "b0sxxx" "system" "system/lib64/libbluetooth_jni.so" 0 0 644 "u:object_r:system_lib_file:s0"
+
 if [ ! -f "$WORK_DIR/system/system/lib64/libbluetooth_jni.so" ]; then
     LOG_STEP_IN "- Extracting libbluetooth_jni.so from com.android.bt.apex"
 
@@ -27,8 +30,4 @@ if [ ! -f "$WORK_DIR/system/system/lib64/libbluetooth_jni.so" ]; then
     LOG_STEP_OUT
 fi
 
-# Disable VaultKeeper support
-# Before: [tbnz w8, #0, #0xbd260]
-# After: [b #0xbd260]
-HEX_PATCH "$WORK_DIR/system/system/lib64/libbluetooth_jni.so" \
-    "2897773948050037" "289777392a000014"
+# VaultKeeper already disabled in the pre-patched b0sxxx binary above — no HEX_PATCH needed
