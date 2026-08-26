@@ -43,8 +43,10 @@ jobs:
       - name: Commit and Push Update
         run: |
           FOLDERS=(
-            "platform/exynos9825"
-            "prebuilts/samsung/p3sxxx"
+            "prebuilts/samsung/a56xnaxx"
+            "prebuilts/samsung/gts11xx"
+            "prebuilts/samsung/pa2qxxx"
+            "unica/mods/paradigm/semanticsearch/SecSettingsIntelligence.apk/res/raw"
           )
           for f in "${FOLDERS[@]}"; do
             if [ -e "$f" ]; then
@@ -57,7 +59,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes detected. s22-Ultra is already up to date."
           else
-            git commit -m "Import platform "exynos9825" and prebuilts "p3sxxx" from sixteen"
+            git commit -m "Import prebuilts and mods from sixteen"
             git pull --rebase origin s22-Ultra
             git push origin s22-Ultra
           fi
