@@ -19,8 +19,10 @@ jobs:
       - name: Copy folders from sixteen
         run: |
           FOLDERS=(
-            "platform/exynos9825"
-            "prebuilts/samsung/p3sxxx"
+            "prebuilts/samsung/a56xnaxx"
+            "prebuilts/samsung/gts11xx"
+            "prebuilts/samsung/pa2qxxx"
+            "unica/mods/paradigm/semanticsearch/SecSettingsIntelligence.apk/res/raw"
           )
           for f in "${FOLDERS[@]}"; do
             echo "== Importing $f =="
