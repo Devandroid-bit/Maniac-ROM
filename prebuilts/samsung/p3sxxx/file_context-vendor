@@ -7,7 +7,6 @@
 /vendor/bin/hw/rild u:object_r:rild_exec:s0
 /vendor/bin/hw/vendor\.samsung\.hardware\.biometrics\.face@3\.0-service u:object_r:hal_face_default_exec:s0
 /vendor/bin/hw/vendor\.samsung\.hardware\.light-service u:object_r:hal_light_default_exec:s0
-/vendor/bin/hw/vendor\.samsung\.hardware\.sysinput@1\.3-service u:object_r:hal_sysinput_default_exec:s0
 /vendor/bin/hw/vendor\.samsung\.hardware\.thermal@1\.0-service u:object_r:hal_thermal_default_exec:s0
 /vendor/bin/hw/vendor\.samsung\.hardware\.uwb@1\.0-service u:object_r:hal_uwb_default_exec:s0
 /vendor/bin/hw/vendor\.samsung\.hardware\.vibrator-service u:object_r:hal_vibrator_default_exec:s0
