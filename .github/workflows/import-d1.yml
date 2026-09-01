@@ -24,7 +24,7 @@ jobs:
           rm -rf target/d1
           
           # 4. I copy the fresh d1 folder exactly where it belongs
-          cp -r /tmp/EternityROM/target/d1xks target/
+          cp -r /tmp/EternityROM/target/d1 target/
 
       - name: Configure Bot Identity
         run: |
