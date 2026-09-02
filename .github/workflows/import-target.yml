@@ -1,0 +1,44 @@
+name: Import d2xks from EternityROM
+on: workflow_dispatch
+
+jobs:
+  import-folder:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout UN1CA Repository
+        uses: actions/checkout@v4
+        with:
+          ref: s22-Ultra
+
+      - name: Fetch and Copy d2xks
+        run: |
+          # 1. I clone just the top layer of EternityROM's 'fifteen' branch to save time
+          git clone --depth 1 -b fifteen https://github.com/Ocin4ever/EternityROM.git /tmp/EternityROM
+          
+          # 2. I make sure the 'target' directory exists in my UN1CA workspace
+          mkdir -p target
+          
+          # 3. I remove any old d2xks folder to avoid mixing old and new files
+          rm -rf target/d2xks
+          
+          # 4. I copy the fresh d1 folder exactly where it belongs
+          cp -r /tmp/EternityROM/target/d2xks target/
+
+      - name: Configure Bot Identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and Push Update
+        run: |
+          git add target/d2xks
+          
+          if git diff --cached --quiet; then
+            echo "No changes detected. The d1xks folder is already up to date."
+          else
+            git commit -m "Import d2xks target from EternityROM (Credits: @Ocin4ever)"
+            git pull --rebase origin sixteen
+            git push origin s22-Ultra
+          fi
