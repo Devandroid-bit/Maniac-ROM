@@ -39,6 +39,6 @@ jobs:
             echo "No changes detected. The d1xks folder is already up to date."
           else
             git commit -m "Import d2xks target from EternityROM (Credits: @Ocin4ever)"
-            git pull --rebase origin sixteen
+            git pull --rebase origin s22-Ultra
             git push origin s22-Ultra
           fi
