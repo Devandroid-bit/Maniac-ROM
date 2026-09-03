@@ -17,7 +17,7 @@
 
 # ExtremeROM Merkur configuration file for Exynos devices (essi/essi_64)
 
-# Galaxy S22 Ultra (One UI 8)
+# Galaxy S22 (One UI 8)
 SOURCE_CODENAME="b0s"
 SOURCE_FIRMWARE="SM-S908B/EUX/350048582870148"
 SOURCE_EXTRA_FIRMWARES=()
