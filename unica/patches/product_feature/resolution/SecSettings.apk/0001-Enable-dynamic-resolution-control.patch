@@ -12,26 +12,10 @@ index 480705d..d7cb2a9 100644
  
      const-string v12, " x "
 diff --git a/smali_classes4/com/samsung/android/settings/display/SecDisplayUtils.smali b/smali_classes4/com/samsung/android/settings/display/SecDisplayUtils.smali
-index 85f38c0..182943f 100644
+index e6044f8..eecb1c1 100644
 --- a/smali_classes4/com/samsung/android/settings/display/SecDisplayUtils.smali
 +++ b/smali_classes4/com/samsung/android/settings/display/SecDisplayUtils.smali
-@@ -1,5 +1,7 @@
- .class public abstract Lcom/samsung/android/settings/display/SecDisplayUtils;
- .super Ljava/lang/Object;
-+.source "qb/109482448 6d761c2a10315b9c58529a348a0add72c833c8eacc639e1eb1a03a7f5b07f23b"
-+
- 
- # static fields
- .field public static final SIGNATURES:[Landroid/content/pm/Signature;
-@@ -14,6 +16,7 @@
- 
- .field public static mWQHDWidth:I
- 
-+
- # direct methods
- .method static constructor <clinit>()V
-     .locals 3
-@@ -1707,7 +1710,7 @@
+@@ -1708,7 +1708,7 @@
      goto :goto_1
  
      :cond_0
@@ -40,7 +24,7 @@ index 85f38c0..182943f 100644
  
      invoke-static {v0}, Ljava/lang/Integer;->parseInt(Ljava/lang/String;)I
  
-@@ -1824,7 +1827,7 @@
+@@ -1825,7 +1825,7 @@
  
      if-eq p0, v0, :cond_0
  
@@ -49,7 +33,7 @@ index 85f38c0..182943f 100644
  
      invoke-static {p0}, Ljava/lang/Integer;->parseInt(Ljava/lang/String;)I
  
-@@ -1866,7 +1869,7 @@
+@@ -1867,7 +1867,7 @@
  
      if-eq p0, v0, :cond_0
  
@@ -58,7 +42,7 @@ index 85f38c0..182943f 100644
  
      invoke-virtual {p0, v1}, Ljava/lang/String;->split(Ljava/lang/String;)[Ljava/lang/String;
  
-@@ -4449,126 +4452,53 @@
+@@ -4450,126 +4450,53 @@
  
      invoke-direct {v0}, Ljava/util/HashSet;-><init>()V
  
@@ -73,14 +57,14 @@ index 85f38c0..182943f 100644
 +    const/16 v3, 0x5f0        # 1520
  
 -    const/4 v2, 0x0
-+    invoke-direct {v1, v2, v3}, Landroid/graphics/Point;-><init>(II)V
- 
+-
 -    move v3, v2
-+    invoke-virtual {v0, v1}, Ljava/util/HashSet;->add(Ljava/lang/Object;)Z
++    invoke-direct {v1, v2, v3}, Landroid/graphics/Point;-><init>(II)V
  
 -    :goto_0
 -    if-ge v3, v1, :cond_0
--
++    invoke-virtual {v0, v1}, Ljava/util/HashSet;->add(Ljava/lang/Object;)Z
+ 
 -    aget-object v4, p0, v3
 +    # FHD+: 1080x2280
 +    new-instance v1, Landroid/graphics/Point;
@@ -118,22 +102,17 @@ index 85f38c0..182943f 100644
      sput-object v0, Lcom/samsung/android/settings/display/SecDisplayUtils;->mSupportedResolutions:Ljava/util/Set;
  
 -    new-instance p0, Ljava/util/ArrayList;
-+    const/16 v4, 0x2d0        # mHDWidth = 720
- 
+-
 -    invoke-direct {p0, v0}, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
-+    sput v4, Lcom/samsung/android/settings/display/SecDisplayUtils;->mHDWidth:I
- 
+-
 -    invoke-virtual {p0}, Ljava/util/ArrayList;->size()I
-+    const/16 v5, 0x438        # mFHDWidth = 1080
- 
+-
 -    move-result v0
-+    sput v5, Lcom/samsung/android/settings/display/SecDisplayUtils;->mFHDWidth:I
- 
+-
 -    const/4 v1, 0x3
 -
 -    if-eq v0, v1, :cond_1
-+    const/16 v6, 0x5a0        # mWQHDWidth = 1440
- 
+-
 -    const-string p0, "SecDisplayUtils"
 -
 -    const-string v0, "No support"
@@ -178,9 +157,11 @@ index 85f38c0..182943f 100644
 -    iget v1, v1, Landroid/graphics/Point;->x:I
 -
 -    sput v1, Lcom/samsung/android/settings/display/SecDisplayUtils;->mFHDWidth:I
--
++    const/16 v4, 0x2d0        # mHDWidth = 720
+ 
 -    invoke-virtual {p0, v0}, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
--
++    sput v4, Lcom/samsung/android/settings/display/SecDisplayUtils;->mHDWidth:I
+ 
 -    move-result-object v0
 -
 -    check-cast v0, Landroid/graphics/Point;
@@ -200,17 +181,20 @@ index 85f38c0..182943f 100644
 -    sput v1, Lcom/samsung/android/settings/display/SecDisplayUtils;->mWQHDWidth:I
 -
 -    invoke-virtual {p0, v0}, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
--
++    const/16 v5, 0x438        # mFHDWidth = 1080
+ 
 -    move-result-object p0
--
++    sput v5, Lcom/samsung/android/settings/display/SecDisplayUtils;->mFHDWidth:I
+ 
 -    check-cast p0, Landroid/graphics/Point;
--
++    const/16 v6, 0x5a0        # mWQHDWidth = 1440
+ 
 -    iget p0, p0, Landroid/graphics/Point;->y:I
 +    sput v6, Lcom/samsung/android/settings/display/SecDisplayUtils;->mWQHDWidth:I
  
      return-void
  .end method
-@@ -5619,7 +5549,7 @@
+@@ -5620,7 +5547,7 @@
  
      if-eq p0, v1, :cond_0
  
@@ -219,7 +203,7 @@ index 85f38c0..182943f 100644
  
      invoke-static {p0}, Ljava/lang/Integer;->parseInt(Ljava/lang/String;)I
  
-@@ -6016,529 +5946,71 @@
+@@ -6017,529 +5944,71 @@
  .end method
  
  .method public static setDisplayMode(Landroid/content/Context;Ljava/lang/String;Landroid/view/Display;)V
@@ -353,7 +337,7 @@ index 85f38c0..182943f 100644
 -    new-instance v7, Ljava/lang/StringBuilder;
 -
 -    invoke-direct {v7, v1}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
- 
+-
 -    :goto_2
 -    invoke-static {v6}, Landroid/os/Debug;->getCallers(I)Ljava/lang/String;
 -
@@ -362,7 +346,7 @@ index 85f38c0..182943f 100644
 -    invoke-virtual {v7, v1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 -
 -    invoke-virtual {v7}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
--
+ 
 -    move-result-object v1
 -
 -    invoke-static {v0, v1}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
