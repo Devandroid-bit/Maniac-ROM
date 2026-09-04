@@ -1,4 +1,4 @@
-name: Import d2xks from EternityROM
+name: Import d2x from EternityROM
 on: workflow_dispatch
 
 jobs:
@@ -12,7 +12,7 @@ jobs:
         with:
           ref: s22-Ultra
 
-      - name: Fetch and Copy d2xks
+      - name: Fetch and Copy d2x
         run: |
           # 1. I clone just the top layer of EternityROM's 'fifteen' branch to save time
           git clone --depth 1 -b fifteen https://github.com/Ocin4ever/EternityROM.git /tmp/EternityROM
@@ -20,11 +20,11 @@ jobs:
           # 2. I make sure the 'target' directory exists in my UN1CA workspace
           mkdir -p target
           
-          # 3. I remove any old d2xks folder to avoid mixing old and new files
-          rm -rf target/d2xks
+          # 3. I remove any old d2x folder to avoid mixing old and new files
+          rm -rf target/d2x
           
           # 4. I copy the fresh d1 folder exactly where it belongs
-          cp -r /tmp/EternityROM/target/d2xks target/
+          cp -r /tmp/EternityROM/target/d2x target/
 
       - name: Configure Bot Identity
         run: |
@@ -33,12 +33,12 @@ jobs:
 
       - name: Commit and Push Update
         run: |
-          git add target/d2xks
+          git add target/d2x
           
           if git diff --cached --quiet; then
             echo "No changes detected. The d1xks folder is already up to date."
           else
-            git commit -m "Import d2xks target from EternityROM (Credits: @Ocin4ever)"
+            git commit -m "Import d2x target from EternityROM (Credits: @Ocin4ever)"
             git pull --rebase origin s22-Ultra
             git push origin s22-Ultra
           fi
