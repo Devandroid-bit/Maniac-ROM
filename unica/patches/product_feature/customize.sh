@@ -116,16 +116,19 @@ if [[ "$(GET_FP_SENSOR_TYPE "$TARGET_FP_SENSOR_CONFIG")" == "optical" ]]; then
     done
 fi
 
-if ! $SOURCE_HAS_QHD_DISPLAY; then
-    if $TARGET_HAS_QHD_DISPLAY; then
-        LOG_STEP_IN "- Applying multi resolution patches"
-        DECODE_APK "system" "system/framework/framework.jar"
-        DECODE_APK "system" "system/priv-app/SecSettings/SecSettings.apk"
-        APPLY_PATCH "system" "system/framework/framework.jar" "$SRC_DIR/unica/patches/product_feature/resolution/framework.jar/0001-Enable-dynamic-resolution-control.patch"     
-        APPLY_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" "$SRC_DIR/unica/patches/product_feature/resolution/SecSettings.apk/0001-Enable-dynamic-resolution-control.patch"
-        SET_FLOATING_FEATURE_CONFIG "SEC_FLOATING_FEATURE_COMMON_CONFIG_DYN_RESOLUTION_CONTROL" "WQHD,FHD,HD"
-        LOG_STEP_OUT
-    fi
+# S22 Ultra One UI 8 source already has a QHD display, but dynamic resolution
+# is disabled in CoreRune. Apply the companion framework and SecSettings patches
+# only when both source and target expose a QHD display and share this UI flow.
+if $SOURCE_HAS_QHD_DISPLAY && $TARGET_HAS_QHD_DISPLAY; then
+    LOG_STEP_IN "- Applying dynamic QHD resolution patches"
+    DECODE_APK "system" "system/framework/framework.jar"
+    DECODE_APK "system" "system/priv-app/SecSettings/SecSettings.apk"
+    APPLY_PATCH "system" "system/framework/framework.jar" \
+        "$SRC_DIR/unica/patches/product_feature/resolution/framework.jar/0001-Enable-dynamic-resolution-control.patch"
+    APPLY_PATCH "system" "system/priv-app/SecSettings/SecSettings.apk" \
+        "$SRC_DIR/unica/patches/product_feature/resolution/SecSettings.apk/0001-Enable-dynamic-resolution-control.patch"
+    SET_FLOATING_FEATURE_CONFIG "SEC_FLOATING_FEATURE_COMMON_CONFIG_DYN_RESOLUTION_CONTROL" "WQHD,FHD,HD"
+    LOG_STEP_OUT
 fi
 if [[ "$SOURCE_HFR_MODE" != "$TARGET_HFR_MODE" ]]; then
     LOG_STEP_IN "- Applying HFR_MODE patches"
@@ -151,6 +154,36 @@ if [[ "$SOURCE_HFR_MODE" != "$TARGET_HFR_MODE" ]]; then
     for f in $FTP; do
         sed -i "s/\"$SOURCE_HFR_MODE\"/\"$TARGET_HFR_MODE\"/g" "$APKTOOL_DIR/$f"
     done
+
+    LOG_STEP_OUT
+fi
+
+# Exynos 9825 targets have fixed 60 Hz panels.  Changing only CoreRune does
+# not hide the One UI 8 Settings entry: HighRefreshRatePreferenceController
+# independently exposes it when the source device supports HFR.  Mark the
+# controller as unsupported after every generic HFR/resolution transformation.
+if [[ "$TARGET_PLATFORM" == "exynos9825" && "$TARGET_HFR_MODE" == "0" ]]; then
+    LOG_STEP_IN "- Hiding unsupported refresh-rate settings for Exynos 9825"
+
+    DECODE_APK "system" "system/priv-app/SecSettings/SecSettings.apk"
+    REFRESH_RATE_CONTROLLER="$APKTOOL_DIR/system/priv-app/SecSettings/SecSettings.apk/smali_classes4/com/samsung/android/settings/display/controller/HighRefreshRatePreferenceController.smali"
+
+    if [[ ! -f "$REFRESH_RATE_CONTROLLER" ]]; then
+        ABORT "Could not locate One UI 8 HighRefreshRatePreferenceController"
+    fi
+
+    sed -i '/^\.method public getAvailabilityStatus()I$/,/^\.end method$/c\
+.method public getAvailabilityStatus()I\
+    .locals 1\
+\
+    const/4 v0, 0x3\
+\
+    return v0\
+.end method' "$REFRESH_RATE_CONTROLLER"
+
+    if ! grep -A6 '^\.method public getAvailabilityStatus()I$' "$REFRESH_RATE_CONTROLLER" | grep -q 'const/4 v0, 0x3'; then
+        ABORT "Failed to hide Exynos 9825 refresh-rate preference"
+    fi
 
     LOG_STEP_OUT
 fi
