@@ -128,13 +128,6 @@ for i in "${FIRMWARES[@]}"; do
     PARSE_FIRMWARE_STRING "$i" || exit 1
 
     LATEST_FIRMWARE="$(GET_LATEST_FIRMWARE "$MODEL" "$CSC")"
-    
-    # MODIFICATION 1 : Écraser la détection de la dernière version pour éviter que le script 
-    # ne croie qu'une mise à jour plus récente est requise lors des vérifications.
-    if [ "$MODEL" == "SM-S908B" ]; then
-        LATEST_FIRMWARE="S908BXXSNGZD7/S908BOXMNGZD7/S908BXXSNGZD7/S908BXXSNGZD7"
-    fi
-
     if [ ! "$LATEST_FIRMWARE" ]; then
         LOGE "Latest available firmware could not be fetched"
         exit 1
@@ -173,6 +166,9 @@ for i in "${FIRMWARES[@]}"; do
     [ -f "$ODIN_DIR/${MODEL}_${CSC}/.downloaded" ] && rm -rf "$ODIN_DIR/${MODEL}_${CSC}"
     mkdir -p "$ODIN_DIR/${MODEL}_${CSC}"
 
+    PINNED_VERSION=""
+    [ $MODEL == "SM-S908B" ] && PINNED_VERSION="S908BXXSNGZD7/S908BOXMNGZD7/S908BXXSNGZD7/S908BXXSNGZD7"
+
     COUNT=1
     # Loop infinetely until download succeeds
     while true; do
@@ -181,11 +177,7 @@ for i in "${FIRMWARES[@]}"; do
         (
         cd "$OUT_DIR"
         STR=""
-        [ $MODEL == "SM-S731B" ] && STR=" -v S731BXXU1AYH9/S731BOXM1AYH9/S731BXXU1AYH9/S731BXXU1AYH9"
-        
-        # MODIFICATION 2 : Forcer samloader à utiliser l'argument -v avec la version exacte demandée
-        [ $MODEL == "SM-S908B" ] && STR=" -v S908BXXSNGZD7/S908BOXMNGZD7/S908BXXSNGZD7/S908BXXSNGZD7"
-        
+        [ -n "$PINNED_VERSION" ] && STR=" -v $PINNED_VERSION"
         samloader -m "$MODEL" -r "$CSC" -i "$IMEI" -s "$SERIAL_NO" download$STR -O "$ODIN_DIR/${MODEL}_${CSC}" || exit 1
         )
 
@@ -209,7 +201,11 @@ for i in "${FIRMWARES[@]}"; do
 
     VERIFY_ODIN_PACKAGES
 
-    echo -n "$LATEST_FIRMWARE" > "$ODIN_DIR/${MODEL}_${CSC}/.downloaded"
+    if [ -n "$PINNED_VERSION" ]; then
+        echo -n "$PINNED_VERSION" > "$ODIN_DIR/${MODEL}_${CSC}/.downloaded"
+    else
+        echo -n "$LATEST_FIRMWARE" > "$ODIN_DIR/${MODEL}_${CSC}/.downloaded"
+    fi
 
     LOG_STEP_OUT; LOG_STEP_OUT
 done
